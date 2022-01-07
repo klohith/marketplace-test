@@ -12,14 +12,14 @@ const Auth0ProviderWithHistory = ({ children }) => {
   };
 
   return (
-    <Auth0Provider
-      domain={domain}
-      clientId={clientId}
-      redirectUri={window.location.origin}
-      audience="https://medcase-dev.eu.auth0.com/api/v2/"
-      scope="read:current_user update:current_user_metadata"
-      onRedirectCallback={onRedirectCallback}
-    >
+      <Auth0Provider
+          domain="https://medcase-dev.eu.auth0.com"
+          clientId="sI6BJkKJ0VFbXXgbtVLgea5UWEDzadDV"
+          redirectUri={window.location.origin}
+          audience="https://medcase.marketplace.api/"
+          scope="read:current_user update:current_user_metadata"
+          onRedirectCallback={onRedirectCallback}
+      >
       {children}
     </Auth0Provider>
   );

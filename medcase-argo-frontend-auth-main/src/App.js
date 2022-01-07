@@ -13,9 +13,14 @@ import History from "./pages/home/History.js";
 import axios from "axios";
 
 const App = () => {
-  var { isAuthenticated } = useAuth0();
+  var { isAuthenticated,getAccessTokenSilently,buildAuthorizeUrl } = useAuth0();
   let history = useHistory();
-
+  console.log("aaaaaaa")
+  buildAuthorizeUrl({audience: "https://medcase.marketplace.api/", redirect_uri: "http://localhost:3000", scope: "read:current_user update:current_user_metadata"})
+      .then(r=>console.log("auth url", r))
+  getAccessTokenSilently({redirect_uri: "http://localhost:3000", })
+      .then(r=>console.log("ssss", r))
+      .catch(r=>console.log("eeee", r))
   // const [isAuthorized, setAuthorized] = useState(false);
   useEffect(() => {
     console.log(isAuthenticated);
@@ -23,9 +28,9 @@ const App = () => {
       history.push("/");
     } else {
       //https://google-hes-development.eu.auth0.com/authorize?response_type=token&connection=google-oauth2&client_id=IShWf4hQRr7hmbNGsHfANxqwfxTKyxEU&redirect_uri=http://localhost:3000&scope=read:current_user
-      const uri = `https://medcase-dev.eu.auth0.com/authorize?response_type=token&connection=google-oauth2&client_id=TcsU556BBXOTGilwFdsXKzqqqsv9wB7G&redirect_uri=http://localhost:3000&scope=read:current_user update:current_user_metadata&nonce=NONCE&prompt=none&audience=https://medcase-dev.eu.auth0.com/api/v2/`;
+      const uri = `https://medcase-dev.eu.auth0.com/authorize?response_type=token&connection=google-oauth2&client_id=sI6BJkKJ0VFbXXgbtVLgea5UWEDzadDV&redirect_uri=http://localhost:3000&scope=read:current_user update:current_user_metadata&nonce=NONCE&prompt=none&audience=https://medcase.marketplace.api/`;
       console.log(uri);
-      window.location.href = uri;
+       // window.location.href = uri;
     }
     // try silent sign in
     //   // var token;
