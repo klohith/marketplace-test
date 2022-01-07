@@ -6,11 +6,6 @@ import HistoryRow from "./HistoryRow";
 import "../../components/body/task_container.css";
 import { useAuth0 } from "@auth0/auth0-react";
 // import "../../components/body/History.css";
-import { Layout, Row, Col, Button } from "antd";
-
-import HeaderAuth from "./headerAuth";
-const { Content, Footer } = Layout;
-
 const axios = require("axios").default;
 var rows = [];
 var rowComp = [];
@@ -76,37 +71,28 @@ function History(props) {
     //   {/* {rows.map((e) => (
     //     <HistoryRows historyData={e} />
     //   ))} */}
-    <Layout style={{ height: "100%" }}>
-      <HeaderAuth />
-      <Content style={{ margin: "6rem 1rem", padding: "0 50px" }}>
-        <div className="task">
-          <div className="task-table-header-container">
-            <table className="task-table">
-              <tr>
-                {/* <th className="task-th thOne">ID</th> */}
-                <th className="task-th thOne">Tasks Id</th>
-                <th className="task-th thOne">Workflow Name</th>
-                {/* <div className="vl"></div> */}
+    <div className="task">
+      <div className="task-table-header-container">
+        <table className="task-table">
+          <tr>
+            {/* <th className="task-th thOne">ID</th> */}
+            <th className="task-th thOne">Tasks Id</th>
+            <th className="task-th thOne">Workflow Name</th>
+            {/* <div className="vl"></div> */}
 
-                <th className="task-th thTwo">Subcategory</th>
-                {/* <div className="vl"></div> */}
-                <th className="task-th thThree">URL</th>
-                {/* <div className="vl"></div> */}
-                <th className="task-th thFour">Address</th>
-                <th className="task-th thFour">Action</th>
-              </tr>
-
-              {data.map((e, id) => (
-                <tr key={id} className="task-table-data">
-                  <HistoryRows {...e} />
-                </tr>
-              ))}
-            </table>
-          </div>
-        </div>
-      </Content>
-      <Footer style={{ textAlign: "center" }}></Footer>
-    </Layout>
+            <th className="task-th thTwo">Subcategory</th>
+            {/* <div className="vl"></div> */}
+            <th className="task-th thThree">URL</th>
+            {/* <div className="vl"></div> */}
+            <th className="task-th thFour">Address</th>
+            <th className="task-th thFour">Action</th>
+          </tr>
+          {data.map((e, id) => (
+            <HistoryRows key={id} {...e} />
+          ))}
+        </table>
+      </div>
+    </div>
     //   {/* {data.map((e) => (
     //     <HistoryRow historyData={e} />
     //   ))} */}

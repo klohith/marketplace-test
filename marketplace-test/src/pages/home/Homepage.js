@@ -3,7 +3,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 import { Card, Button, Table, message, Alert } from "antd";
 import { useHistory, Redirect } from "react-router-dom";
-import request from "umi-request";
 import {
   claimHighest,
   completeTask,
@@ -37,6 +36,7 @@ function Homepage({ props }) {
   //   <Redirect to="/login" />;
   // }
   // var isSeniorReviwer = true;
+  const [accessToken, setToken] = useState("");
   const { user, logout, getAccessTokenSilently } = useAuth0();
   const [userMetadata, setUserMetadata] = useState(true);
   const [isClaimed, setIsClaimed] = useState(false);
@@ -119,17 +119,18 @@ function Homepage({ props }) {
       const domain = process.env.REACT_APP_AUTH0_DOMAIN;
 
       try {
-        const accessToken = await getAccessTokenSilently({
+        var token = await getAccessTokenSilently({
           audience: `https://${domain}/api/v2/`,
           scope: "read:current_user",
         });
-        console.log(accessToken);
+        setToken(token);
+        console.log(accessToken, token);
 
         const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user.sub}`;
 
         const metadataResponse = await fetch(userDetailsByIdUrl, {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         // console.log(await metadataResponse.json());
@@ -353,9 +354,6 @@ function Homepage({ props }) {
     //   }
     //   return;
     // }
-    console.log("History enter");
-    history.push("history");
-    console.log("History pushed");
     // state = { redirect: null };
     // render() {
     // if (this.state.redirect) {
@@ -369,6 +367,73 @@ function Homepage({ props }) {
     setTextBox1(val);
     console.log(textBox1);
   }
+
+  // let openFrame = () => {
+  //   const uri = `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize?response_type=token&connection=google-oauth2&client_id=TcsU556BBXOTGilwFdsXKzqqqsv9wB7G&redirect_uri=https://arge-hes.ue.r.appspot.com/&scope=read:current_user update:current_user_metadata&nonce=NONCE&prompt=none&audience=https://medcase-dev.eu.auth0.com/api/v2/`;
+
+  //   let iframe = document.createElement("iframe");
+  //   // window.top.postMessage("I am Iframe", "iframe");
+  //   // window.onmessage = (event) => {
+  //   //   if (event.data === "GOT_YOU_IFRAME") {
+  //   //     console.log("Parent received successfully.");
+  //   //   }
+  //   // };
+  //   iframe.src = uri;
+  //   iframe.csp = "none";
+  //   iframe.frameBorder = "0";
+  //   iframe.id = "iframe";
+  //   iframe.style.position = "absolute";
+  //   iframe.style.zIndex = "999";
+  //   iframe.style.height = "100%";
+  //   iframe.style.width = "100%";
+  //   iframe.style.top = "0";
+  //   iframe.style.backgroundColor = "white";
+  //   iframe.style.border = "none";
+  //   document.body.prepend(iframe);
+  //   document.body.style.overflow = "hidden";
+  //   // var interval = setInterval(() => {
+  //   //   iframe.contentWindow.postMessage(
+  //   //     accessToken,
+  //   //     "https://arge-hes.ue.r.appspot.com"
+  //   //   );
+  //   // clearInterval(interval);
+  //   // }, 5000);
+  //   // clear;
+  //   // console.log("Hi");
+  // };
+  let openFrame = () => {
+    const uri = `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize?response_type=token&connection=google-oauth2&client_id=TcsU556BBXOTGilwFdsXKzqqqsv9wB7G&redirect_uri=https://arge-hes.ue.r.appspot.com/&scope=read:current_user update:current_user_metadata&nonce=NONCE&prompt=none&audience=https://medcase-dev.eu.auth0.com/api/v2/`;
+
+    let iframe = document.createElement("iframe");
+    // window.top.postMessage("I am Iframe", "iframe");
+    // window.onmessage = (event) => {
+    //   if (event.data === "GOT_YOU_IFRAME") {
+    //     console.log("Parent received successfully.");
+    //   }
+    // };
+    iframe.src = "http://localhost:3000/";
+    iframe.csp = "none";
+    iframe.frameBorder = "0";
+    iframe.id = "iframe";
+    iframe.style.position = "absolute";
+    iframe.style.zIndex = "999";
+    iframe.style.height = "100%";
+    iframe.style.width = "100%";
+    iframe.style.top = "0";
+    iframe.style.backgroundColor = "white";
+    iframe.style.border = "none";
+    document.body.prepend(iframe);
+    document.body.style.overflow = "hidden";
+    // var interval = setInterval(() => {
+    //   iframe.contentWindow.postMessage(
+    //     accessToken,
+    //     "https://arge-hes.ue.r.appspot.com"
+    //   );
+    // clearInterval(interval);
+    // }, 5000);
+    // clear;
+    // console.log("Hi");
+  };
   return (
     <Card
       title={`Welcome ${user.name}`}
@@ -377,1107 +442,85 @@ function Homepage({ props }) {
         <div>
           <Button
             onClick={async () => {
-              var config = {
-                // mode: "no-cors",
-                method: "POST",
-                // headers: { "Access-Control-Allow-Origin": "*" },
-                url:
-                  "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-                data: isSeniorReviwer
-                  ? JSON.stringify({
-                      country: "US",
-                      email: user.email,
-                      // role: "sr_reviewer",
-                    })
-                  : JSON.stringify({
-                      country: "US",
-                      email: user.email,
-                    }),
-              };
-              var response = await axios(config);
-              // var response = await request(
-              //   "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-              //   {
-              //     mode: "no-cors",
-              //     method: "POST",
-              //     data: isSeniorReviwer
-              //       ? JSON.stringify({
-              //           country: "US",
-              //           email: user.email,
-              //           // role: "sr_reviewer",
-              //         })
-              //       : JSON.stringify({
-              //           country: "US",
-              //           email: user.email,
-              //           role: "jr_reviewer",
-              //         }),
-              //   }
+              // var config = {
+              //   method: "POST",
+              //   // headers: { "Access-Control-Allow-Origin": "*" },
+              //   url:
+              //     "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
+              //   data: isSeniorReviwer
+              //     ? JSON.stringify({
+              //         country: "US",
+              //         email: user.email,
+              //         role: "sr_reviewer",
+              //       })
+              //     : JSON.stringify({
+              //         country: "US",
+              //         email: user.email,
+              //       }),
+              // };
+              // var response = await axios(config);
+              // // console.log(user);
+              // console.log(response.data, "response");
+              // // var data = JSON.parse(response.data);
+              // setTextBoxLabel1(response.data["subcategory"]);
+              // setTextBoxLabel2(response.data["health authority name"]);
+              // setTextBoxLabel3(response.data["health authority website"]);
+              // setTextBoxLabel4(response.data["address"]);
+              // setID(response.data["id"]);
+              // setspreadsheet_ID(response.data["spreadsheet_ID"]);
+              // // textBoxLabel1 = response.data.name;`
+              // popUpTrigger(true);
+              openFrame();
+              // console.log(
+              //   response.data["organization_info"],
+              //   "response.data[organization_info]"
               // );
-              // console.log(user);
-
-              console.log(response.data, "response");
-              // var data = JSON.parse(response.data);
-              setTextBoxLabel1(response.data["subcategory"]);
-              setTextBoxLabel2(response.data["health authority name"]);
-              setTextBoxLabel3(response.data["health authority website"]);
-              setTextBoxLabel4(response.data["address"]);
-              setID(response.data["id"]);
-              setspreadsheet_ID(response.data["spreadsheet_ID"]);
-
-              // textBoxLabel1 = response.data.name;`
-              popUpTrigger(true);
-              console.log(
-                response.data["organization_info"],
-                "response.data[organization_info]"
-              );
-
-              if (isSeniorReviwer) {
-                setMenuThree(response.data["geo_info"]);
-                setTextBox1(response.data["organization_info"]);
-                // setTextBox2(response.data["organization_info"]);
-                setTextBox3(response.data["channel_health"]);
-                // setTextBox4(response.data["channel_health"]);
-                setMenuOne(response.data["channel_selection"]);
-                setMenuTwo(response.data["medcase_team_member"]);
-                setTextBox5(response.data["youtube_channelId"]);
-                setTextBox6(response.data["comments"]);
-                // console.log(response.data["organization_info"]);
-              }
-
-              // localStorage.setItem(
-              //   "workflowName",
-              //   initialDataFromAuth["Workflow Name"]
-              // );
-              // localStorage.setItem(
-              //   "currentLanguage",
-              //   initialDataFromAuth["Language proficiency"]
-              // );
-              // claimHighestAdmin.run();
+              // if (isSeniorReviwer) {
+              //   setMenuThree(response.data["geo_info"]);
+              //   setTextBox1(response.data["organization_info"]);
+              //   // setTextBox2(response.data["organization_info"]);
+              //   setTextBox3(response.data["channel_health"]);
+              //   // setTextBox4(response.data["channel_health"]);
+              //   setMenuOne(response.data["channel_selection"]);
+              //   setMenuTwo(response.data["medcase_team_member"]);
+              //   setTextBox5(response.data["youtube_channelId"]);
+              //   setTextBox6(response.data["comments"]);
+              //   // console.log(response.data["organization_info"]);
+              // }
+              // // localStorage.setItem(
+              // //   "workflowName",
+              // //   initialDataFromAuth["Workflow Name"]
+              // // );
+              // // localStorage.setItem(
+              // //   "currentLanguage",
+              // //   initialDataFromAuth["Language proficiency"]
+              // // );
+              // // claimHighestAdmin.run();
             }}
             type="primary"
           >
-            <PlayCircleTwoTone /> Start Task
+            <PlayCircleTwoTone /> Start Task Argo
           </Button>
-          <Button
-            onClick={handleClick}
+          {/* <Button
+            onClick={() => handleClick()}
             // type="primary"
             email={user.email}
             isSeniorReviwer={isSeniorReviwer}
           >
             History
-          </Button>
+          </Button> */}
           {/* <HistoryButton /> */}
         </div>
       }
     >
-      <PopUp trigger={trigger} setTrigger={popUpTrigger}>
-        {isSeniorReviwer === true ? (
-          <div>
-            <form>
-              <h1>Senior Reviwer</h1>
-              <label className="label-one">
-                <b>Subcategory: </b>
-                {textBoxLabel1 ? textBoxLabel1 : taskLabel}
-              </label>
-
-              <label className="label-one">
-                <b>Name: </b>
-                {textBoxLabel2 ? textBoxLabel2 : taskLabel}
-              </label>
-              <a href={textBoxLabel3} className="label-one">
-                <b>Website: </b>
-                {textBoxLabel3 ? textBoxLabel3 : taskLabel}
-              </a>
-              <label className="label-one">
-                <b>Address: </b>
-                {textBoxLabel4 ? textBoxLabel4 : taskLabel}
-              </label>
-              <label className="dropdown-one">
-                Geo information (select verified if Geo is listed in column N
-                after verifying info)
-              </label>
-              <select
-                id="dropdown"
-                className="dropdown-one"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuThree(input.target.value);
-                  // console.log(menu, input.target.value);
-                }}
-              >
-                {/* <option value="N/A">N/A</option> */}
-                <option value={menuThree}>{menuThree}</option>
-                <option value="Verifed">Verifed</option>
-                <option value="Unable to Verify">Unable to Verify</option>
-              </select>
-              <label className="label-two">
-                {textBoxLabel5 ? textBoxLabel5 : taskLabel}:
-              </label>
-              <input
-                className="textbox"
-                type="text"
-                value={textBox1}
-                onChange={(e) => {
-                  setTextBox1(e.target.value);
-                }}
-              />
-
-              <label className="label-two">
-                {textBoxLabel6 ? textBoxLabel6 : taskLabel}:
-              </label>
-              <select
-                id="dropdown"
-                className="dropdown-one"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuFour(input.target.value);
-                  // console.log(menu, input.target.value);
-                }}
-              >
-                <option value={menuFour}>{menuFour}</option>
-                <option value="website">website</option>
-                <option value="address">address</option>
-                <option value="health authority name">
-                  health authority name
-                </option>
-                <option value="website 	&#38; address">
-                  website &#38; address
-                </option>
-                <option value="website &#38; name">website &#38; name</option>
-                <option value="all 3">all 3</option>
-              </select>
-              <div>
-                <input
-                  type="radio"
-                  value="yes"
-                  name="textBox3"
-                  checked={textBox3 === "yes"}
-                  className="radio-button"
-                  onChange={(e) => setTextBox3(e.currentTarget.value)}
-                />
-                {textBoxLabel7 ? textBoxLabel7 : taskLabel}:
-                <br />
-                <input
-                  type="radio"
-                  value="no"
-                  name="textBox3"
-                  checked={textBox3 === "no"}
-                  className="radio-button"
-                  onChange={(e) => setTextBox3(e.currentTarget.value)}
-                />
-                {textBoxLabel8 ? textBoxLabel8 : taskLabel}:
-              </div>
-              {/* <label className="label-two">
-                {textBoxLabel7 ? textBoxLabel7 : taskLabel}:
-              </label>
-              <input
-                className="textbox"
-                type="text"
-                value={textBox3}
-                onChange={(e) => {
-                  setTextBox3(e.target.value);
-                }}
-              />
-              <label className="label-two">
-                {textBoxLabel8 ? textBoxLabel8 : taskLabel}:
-              </label>
-              <input
-                className="textbox"
-                type="text"
-                value={textBox4}
-                onChange={(e) => {
-                  setTextBox4(e.target.value);
-                }}
-              /> */}
-              <label className="label-two">
-                {textBoxLabel9 ? textBoxLabel9 : taskLabel}:
-              </label>
-              <input
-                className="textbox"
-                id="youtube_channel_id"
-                type="text"
-                value={textBox5}
-                onChange={(e) => {
-                  if ("https://www$1youtube$1com/c/".match(e)) {
-                    document.getElementById("youtube_channel_id").innerHTML =
-                      "succuss";
-                    console.log(true, "matched");
-                  }
-                  setTextBox5(e.target.value);
-                }}
-              />
-              <label className="label-two">
-                {textBoxLabel11 ? textBoxLabel11 : taskLabel}:
-              </label>
-              <select
-                id="dropdown-two"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuTwo(input.target.value);
-                  // console.log(input.target.value);
-                }}
-              >
-                <option value={menuTwo}>{menuTwo}</option>
-                <option value="rev1">rev1</option>
-                <option value="rev2">rev2</option>
-                <option value="rev3">rev3</option>
-                <option value="rev4">rev4</option>
-                <option value="rev5">rev5</option>
-                <option value="rev6">rev6</option>
-                <option value="rev7">rev7</option>
-                <option value="rev8">rev8</option>
-                <option value="rev9">rev9</option>
-                <option value="rev10">rev10</option>
-                <option value="rev11">rev11</option>
-                <option value="rev12">rev12</option>
-              </select>
-              <label className="label-two">
-                {textBoxLabel12 ? textBoxLabel12 : taskLabel}:
-              </label>
-
-              <select
-                id="dropdown"
-                className="dropdown-one"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuOne(input.target.value);
-                  // console.log(menu, input.target.value);
-                }}
-              >
-                <option value={menu}>{menu}</option>
-                <option value="1 Channel link on website">
-                  1 Channel link on website
-                </option>
-                <option value="2 Channel about section">
-                  2 Channel about section
-                </option>
-                <option value="3 Channel logo and name">
-                  3 Channel logo and name
-                </option>
-                <option value="4 Channel video content">
-                  4 Channel video content
-                </option>
-                <option value="5 Other (please comment)">
-                  5 Other (please comment)
-                </option>
-                <option value="6 Unsure (please comment)">
-                  6 Unsure (please comment)
-                </option>
-              </select>
-              <label className="label-two">
-                {textBoxLabel10 ? textBoxLabel10 : taskLabel}:
-              </label>
-
-              <input
-                className="textbox"
-                type="text"
-                value={textBox6}
-                onChange={(e) => {
-                  setTextBox6(e.target.value);
-                }}
-              />
-
-              {/*
-          <label className="label-two">
-            {textBoxLabel5 ? textBoxLabel5 : taskLabel}
-          </label>
-          <input
-            type="text"
-            value={textBox7}
-            onChange={(e) => {
-              setTextBox7(e.target.value);
-            }}
-          />
-          <label className="label-two">
-            {textBoxLabel6 ? textBoxLabel6 : taskLabel}
-          </label>
-          <input
-            type="text"
-            value={textBox8}
-            onChange={(e) => {
-              setTextBox8(e.target.value);
-            }}
-          /> */}
-              <label className="label-two">Senior Reviewer:</label>
-              <select
-                id="dropdown-three"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuFive(input.target.value);
-                  // console.log(input.target.value);
-                }}
-              >
-                <option value={menuFive}>{menuFive}</option>
-                <option value="sr1">sr1</option>
-                <option value="sr2">sr2</option>
-                <option value="sr3">sr3</option>
-                <option value="sr4">sr4</option>
-              </select>
-              <label className="label-two">Determination:</label>
-              <select
-                id="dropdown-three"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuSix(input.target.value);
-                  // console.log(input.target.value);
-                }}
-              >
-                <option value={menuSix}>{menuSix}</option>
-                <option value="approved">approved</option>
-                <option value="changed">changed</option>
-                <option value="ready">ready</option>
-              </select>
-
-              <label className="label-two">Change Type:</label>
-              <select
-                id="dropdown-two"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuSeven(input.target.value);
-                  // console.log(input.target.value);
-                }}
-              >
-                <option value={menuSeven}>{menuSeven}</option>
-                <option value="incorrect channel selection">
-                  incorrect channel selection
-                </option>
-                <option value="parent organization selected when entity channel exists">
-                  parent organization selected when entity channel exists
-                </option>
-                <option value="parent organization selected is not in the same category">
-                  rev3
-                </option>
-                <option value="incorrectly marked not healthcare">
-                  parent organization selected is not in the same category
-                </option>
-                <option value="incorrectly marked healthcare">
-                  incorrectly marked healthcare
-                </option>
-                <option value="listed as none when channel exists">
-                  listed as none when channel exists
-                </option>
-                <option value="organization info not correct">
-                  organization info not correct
-                </option>
-                <option value="do not count">do not count</option>
-              </select>
-
-              <label className="label-two">Audit Comments:</label>
-              <input
-                className="textbox"
-                type="text"
-                value={textBox7}
-                onChange={(e) => {
-                  setTextBox7(e.target.value);
-                }}
-              />
-            </form>
-            <Button onClick={() => popUpTrigger(false)}>Stop</Button>
-            <Button
-              onClick={async () => {
-                // https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/previousTask
-                var currentState = {
-                  spreadsheet_id: spreadsheet_ID,
-                  task_id: id,
-                  textBoxLabel1: textBoxLabel1,
-                  textBoxLabel2: textBoxLabel2,
-                  textBoxLabel3: textBoxLabel3,
-                  textBoxLabel4: textBoxLabel4,
-
-                  // end_time: "17-11-2021 9:42",
-                  geo_information: menuThree,
-                  organization_info: textBox1,
-                  changed_info: menuFour,
-                  health_care: textBox3,
-                  not_health_care: textBox4,
-                  youtube_channelID: textBox5,
-                  medcase_team_member: menuTwo,
-                  channel_selection: menu,
-                  comments: textBox6,
-                  role: "sr_reviewer",
-                  senior_reviewer: menuFive,
-                  determination: menuSix,
-                  change_type: menuSeven,
-                  audit_comments: textBox7,
-                };
-
-                sessionStorage.setItem("current_task", currentState);
-                sessionStorage.setItem("current_task_id", id);
-
-                const previous_id = sessionStorage.getItem("task_id");
-                var JSONOBJ = {
-                  task_id: previous_id,
-                  spreadsheet_id: spreadsheet_ID,
-                  role: "sr_reviewer",
-                };
-                var configOne = {
-                  method: "POST",
-                  // headers: { "Access-Control-Allow-Origin": "*" },
-                  url:
-                    "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/previousTask",
-                  data: JSON.stringify(JSONOBJ),
-                };
-
-                var responseOne = await axios(configOne);
-                console.log(responseOne.data);
-                popUpTrigger(false);
-
-                setTextBoxLabel1("");
-                setTextBoxLabel2("");
-                setTextBoxLabel3("");
-                setTextBoxLabel4("");
-                setTextBox1("");
-                setTextBox3("");
-                setTextBox4("");
-                setTextBox5("");
-                setTextBox6("");
-
-                // var config = {
-                //   method: "POST",
-                //   // headers: { "Access-Control-Allow-Origin": "*" },
-                //   url:
-                //     "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-                //   data: JSON.stringify({
-                //     country: "US",
-                //     email: user.email,
-                //     role: "sr_reviewer",
-                //   }),
-                // };
-                // var response = await axios(config);
-                // console.log(response.data, "response");
-                // var data = JSON.parse(response.data);
-                setTextBoxLabel1(responseOne.data["subcategory"]);
-                setTextBoxLabel2(responseOne.data["health authority name"]);
-                setTextBoxLabel3(responseOne.data["health authority website"]);
-                setTextBoxLabel4(responseOne.data["address"]);
-                setID(responseOne.data["id"]);
-                setspreadsheet_ID(responseOne.data["spreadsheet_ID"]);
-
-                // if (isSeniorReviwer) {
-                setMenuThree(responseOne.data["geo_info"]);
-                setTextBox1(responseOne.data["organization_info"]);
-                // setTextBox2(response.data["organization_info"]);
-                setTextBox3(responseOne.data["channel_health"]);
-                // setTextBox4(response.data["channel_health"]);
-                setMenuOne(responseOne.data["channel_selection"]);
-                setMenuTwo(responseOne.data["medcase_team_member"]);
-                setTextBox5(responseOne.data["youtube_channelId"]);
-                setTextBox6(responseOne.data["comments"]);
-                // console.log(response.data["organization_info"]);
-                // }
-                // textBoxLabel1 = response.data.name;`
-                popUpTrigger(true);
-              }}
-            >
-              Previous
-            </Button>
-            <Button
-              onClick={async () => {
-                setTaskIds(() => {
-                  return taskIds.push(id);
-                });
-                sessionStorage.setItem("taskids", taskIds);
-                // setID("");
-                // setspreadsheet_ID("");
-                // var config = {
-                //   method: "POST",
-                //   // headers: { "Access-Control-Allow-Origin": "*" },
-                //   url:
-                //     "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-                //   data: JSON.stringify({
-                //     country: "US",
-                //     email: user.email,
-                //   }),
-                // };
-                // var response = await axios(config);
-                // console.log(response.data.name, "response");
-                // // var data = JSON.parse(response.data);
-                // setTextBoxLabel1(response.data["subcategory"]);
-                // setTextBoxLabel2(response.data["health authority name"]);
-                // setTextBoxLabel3(response.data["health authority website"]);
-                // setTextBoxLabel4(response.data["address"]);
-                sessionStorage.setItem("task_id", id);
-
-                var JSONOBJ = {
-                  spreadsheet_id: spreadsheet_ID,
-                  task_id: id,
-                  // end_time: "17-11-2021 9:42",
-                  geo_information: menuThree,
-                  organization_info: textBox1,
-                  changed_info: menuFour,
-                  health_care: textBox3,
-                  not_health_care: textBox4,
-                  youtube_channelID: textBox5,
-                  medcase_team_member: menuTwo,
-                  channel_selection: menu,
-                  comments: textBox6,
-                  role: "sr_reviewer",
-                  senior_reviewer: menuFive,
-                  determination: menuSix,
-                  change_type: menuSeven,
-                  audit_comments: textBox7,
-                };
-                console.log(JSONOBJ);
-
-                var configOne = {
-                  method: "POST",
-                  // headers: { "Access-Control-Allow-Origin": "*" },
-                  url:
-                    "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/setTaskValue",
-                  data: JSON.stringify(JSONOBJ),
-                };
-
-                var responseOne = await axios(configOne);
-                console.log(responseOne);
-                popUpTrigger(false);
-
-                setTextBoxLabel1("");
-                setTextBoxLabel2("");
-                setTextBoxLabel3("");
-                setTextBoxLabel4("");
-                setTextBox1("");
-                setTextBox3("");
-                setTextBox4("");
-                setTextBox5("");
-                setTextBox6("");
-                setTextBox7("");
-
-                var config = {
-                  method: "POST",
-                  // headers: { "Access-Control-Allow-Origin": "*" },
-                  url:
-                    "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-                  data: JSON.stringify({
-                    country: "US",
-                    email: user.email,
-                    role: "sr_reviewer",
-                  }),
-                };
-                var response = await axios(config);
-                console.log(response.data, "response");
-                // var data = JSON.parse(response.data);
-                setTextBoxLabel1(response.data["subcategory"]);
-                setTextBoxLabel2(response.data["health authority name"]);
-                setTextBoxLabel3(response.data["health authority website"]);
-                setTextBoxLabel4(response.data["address"]);
-                setID(response.data["id"]);
-                setspreadsheet_ID(response.data["spreadsheet_ID"]);
-
-                setTextBoxLabel1(response.data["subcategory"]);
-                setTextBoxLabel2(response.data["health authority name"]);
-                setTextBoxLabel3(response.data["health authority website"]);
-                setTextBoxLabel4(response.data["address"]);
-                setID(response.data["id"]);
-                setspreadsheet_ID(response.data["spreadsheet_ID"]);
-
-                setMenuThree(response.data["geo_info"]);
-                setTextBox1(response.data["organization_info"]);
-                // setTextBox2(response.data["organization_info"]);
-                setTextBox3(response.data["channel_health"]);
-                // setTextBox4(response.data["channel_health"]);
-                setMenuOne(response.data["channel_selection"]);
-                setMenuTwo(response.data["medcase_team_member"]);
-                setTextBox5(response.data["youtube_channelId"]);
-                setTextBox6(response.data["comments"]);
-                // textBoxLabel1 = response.data.name;`
-                popUpTrigger(true);
-              }}
-            >
-              Next
-            </Button>
-            <Button
-              onClick={async () => {
-                var config = {
-                  method: "POST",
-                  // headers: { "Access-Control-Allow-Origin": "*" },
-                  url:
-                    "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/skipTask",
-                  data: JSON.stringify({
-                    task_id: id,
-                    spreadsheet_id: spreadsheet_ID,
-                    role: "sr_reviewer",
-                  }),
-                };
-                var response = await axios(config);
-                console.log(response.data);
-                // response.data
-                if (response.data == "Task Skipped") {
-                  popUpTrigger(false);
-
-                  setTextBoxLabel1("");
-                  setTextBoxLabel2("");
-                  setTextBoxLabel3("");
-                  setTextBoxLabel4("");
-                  setTextBox1("");
-                  setTextBox3("");
-                  setTextBox4("");
-                  setTextBox5("");
-                  setTextBox6("");
-
-                  var config = {
-                    method: "POST",
-                    // headers: { "Access-Control-Allow-Origin": "*" },
-                    url:
-                      "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-                    data: JSON.stringify({
-                      country: "US",
-                      email: user.email,
-                      role: "sr_reviewer",
-                    }),
-                  };
-                  var response = await axios(config);
-                  console.log(response.data, "response");
-                  // var data = JSON.parse(response.data);
-                  setTextBoxLabel1(response.data["subcategory"]);
-                  setTextBoxLabel2(response.data["health authority name"]);
-                  setTextBoxLabel3(response.data["health authority website"]);
-                  setTextBoxLabel4(response.data["address"]);
-                  setID(response.data["id"]);
-                  setspreadsheet_ID(response.data["spreadsheet_ID"]);
-
-                  setMenuThree(response.data["geo_info"]);
-                  setTextBox1(response.data["organization_info"]);
-                  // setTextBox2(response.data["organization_info"]);
-                  setTextBox3(response.data["channel_health"]);
-                  // setTextBox4(response.data["channel_health"]);
-                  setMenuOne(response.data["channel_selection"]);
-                  setMenuTwo(response.data["medcase_team_member"]);
-                  setTextBox5(response.data["youtube_channelId"]);
-                  setTextBox6(response.data["comments"]);
-
-                  // textBoxLabel1 = response.data.name;`
-                  popUpTrigger(true);
-                } else {
-                  console.log("Error: Task NOT Skipped");
-                }
-              }}
-            >
-              Skip
-            </Button>
-          </div>
-        ) : (
-          <div>
-            <form>
-              <h1>Junior Reviwer</h1>
-              <label className="label-one">
-                <b> Subcategory: </b>
-                {textBoxLabel1 ? textBoxLabel1 : taskLabel}
-              </label>
-
-              <label className="label-one">
-                <b>Name: </b>
-                {textBoxLabel2 ? textBoxLabel2 : taskLabel}
-              </label>
-              <a href={textBoxLabel3} className="label-one">
-                <b> Website: </b>
-                {textBoxLabel3 ? textBoxLabel3 : taskLabel}
-              </a>
-              <label className="label-one">
-                <b>Address: </b>
-                {textBoxLabel4 ? textBoxLabel4 : taskLabel}
-              </label>
-              <label className="dropdown-one">
-                Geo information (select verified if Geo is listed in column N
-                after verifying info)
-              </label>
-              <select
-                id="dropdown"
-                className="dropdown-one"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuThree(input.target.value);
-                  // console.log(menu, input.target.value);
-                }}
-              >
-                {/* <option value="N/A">N/A</option> */}
-                <option value={null}>{""}</option>
-                <option value="Verifed">Verifed</option>
-                <option value="Unable to Verify">Unable to Verify</option>
-              </select>
-              <label className="label-two">
-                {textBoxLabel5 ? textBoxLabel5 : taskLabel}:
-              </label>
-              <input
-                className="textbox"
-                type="text"
-                value={textBox1}
-                onChange={(e) => {
-                  setTextBox1(e.target.value);
-                }}
-              />
-
-              <label className="label-two">
-                {textBoxLabel6 ? textBoxLabel6 : taskLabel}:
-              </label>
-              <select
-                id="dropdown"
-                className="dropdown-one"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuFour(input.target.value);
-                  // console.log(menu, input.target.value);
-                }}
-              >
-                <option value={null}>{""}</option>
-                <option value="website">website</option>
-                <option value="address">address</option>
-                <option value="health authority name">
-                  health authority name
-                </option>
-                <option value="website 	&#38; address">
-                  website &#38; address
-                </option>
-                <option value="website &#38; name">website &#38; name</option>
-                <option value="all 3">all 3</option>
-              </select>
-              <div onChange={setTextBox3.bind(this)}>
-                <input
-                  type="radio"
-                  value="YES"
-                  name="textBox3"
-                  className="radio-button"
-                />
-                {textBoxLabel7 ? textBoxLabel7 : taskLabel}:
-                <br />
-                <input
-                  type="radio"
-                  value="NO"
-                  name="textBox3"
-                  className="radio-button"
-                />
-                {textBoxLabel8 ? textBoxLabel8 : taskLabel}:
-              </div>
-              {/* <label className="label-two">
-                {textBoxLabel7 ? textBoxLabel7 : taskLabel}:
-              </label>
-              <input
-                className="textbox"
-                type="text"
-                value={textBox3}
-                onChange={(e) => {
-                  setTextBox3(e.target.value);
-                }}
-              />
-              <label className="label-two">
-                {textBoxLabel8 ? textBoxLabel8 : taskLabel}:
-              </label>
-              <input
-                className="textbox"
-                type="text"
-                value={textBox4}
-                onChange={(e) => {
-                  setTextBox4(e.target.value);
-                }}
-              /> */}
-
-              <label className="label-two">
-                {textBoxLabel9 ? textBoxLabel9 : taskLabel}:
-              </label>
-              <input
-                className="textbox"
-                type="text"
-                value={textBox5}
-                onChange={(e) => {
-                  setTextBox5(e.target.value);
-                }}
-              />
-              <label className="label-two">
-                {textBoxLabel11 ? textBoxLabel11 : taskLabel}:
-              </label>
-              <select
-                id="dropdown-two"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuTwo(input.target.value);
-                  // console.log(input.target.value);
-                }}
-              >
-                <option value={null}>{""}</option>
-                <option value="rev1">rev1</option>
-                <option value="rev2">rev2</option>
-                <option value="rev3">rev3</option>
-                <option value="rev4">rev4</option>
-                <option value="rev5">rev5</option>
-                <option value="rev6">rev6</option>
-                <option value="rev7">rev7</option>
-                <option value="rev8">rev8</option>
-                <option value="rev9">rev9</option>
-                <option value="rev10">rev10</option>
-                <option value="rev11">rev11</option>
-                <option value="rev12">rev12</option>
-              </select>
-              <label className="label-two">
-                {textBoxLabel12 ? textBoxLabel12 : taskLabel}:
-              </label>
-
-              <select
-                id="dropdown"
-                className="dropdown-one"
-                onChange={(input) => {
-                  // menu = input;
-                  setMenuOne(input.target.value);
-                  // console.log(menu, input.target.value);
-                }}
-              >
-                <option value={null}>{""}</option>
-                <option value="1 Channel link on website">
-                  1 Channel link on website
-                </option>
-                <option value="2 Channel about section">
-                  2 Channel about section
-                </option>
-                <option value="3 Channel logo and name">
-                  3 Channel logo and name
-                </option>
-                <option value="4 Channel video content">
-                  4 Channel video content
-                </option>
-                <option value="5 Other (please comment)">
-                  5 Other (please comment)
-                </option>
-                <option value="6 Unsure (please comment)">
-                  6 Unsure (please comment)
-                </option>
-              </select>
-              <label className="label-two">
-                {textBoxLabel10 ? textBoxLabel10 : taskLabel}:
-              </label>
-
-              <input
-                className="textbox"
-                type="text"
-                value={textBox6}
-                onChange={(e) => {
-                  setTextBox6(e.target.value);
-                }}
-              />
-
-              {/*
-          <label className="label-two">
-            {textBoxLabel5 ? textBoxLabel5 : taskLabel}
-          </label>
-          <input
-            type="text"
-            value={textBox7}
-            onChange={(e) => {
-              setTextBox7(e.target.value);
-            }}
-          />
-          <label className="label-two">
-            {textBoxLabel6 ? textBoxLabel6 : taskLabel}
-          </label>
-          <input
-            type="text"
-            value={textBox8}
-            onChange={(e) => {
-              setTextBox8(e.target.value);
-            }}
-          /> */}
-            </form>
-            <Button onClick={() => popUpTrigger(false)}>Stop</Button>
-            <Button
-              onClick={async () => {
-                const previous_id = sessionStorage.getItem("task_id");
-                var JSONOBJ = {
-                  task_id: previous_id,
-                  spreadsheet_id: spreadsheet_ID,
-                };
-                var configOne = {
-                  method: "POST",
-                  // headers: { "Access-Control-Allow-Origin": "*" },
-                  url:
-                    "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/previousTask",
-                  data: JSON.stringify(JSONOBJ),
-                };
-
-                var responseOne = await axios(configOne);
-                console.log(responseOne.data);
-                popUpTrigger(false);
-
-                setTextBoxLabel1("");
-                setTextBoxLabel2("");
-                setTextBoxLabel3("");
-                setTextBoxLabel4("");
-                setTextBox1("");
-                setTextBox3("");
-                setTextBox4("");
-                setTextBox5("");
-                setTextBox6("");
-
-                // var config = {
-                //   method: "POST",
-                //   // headers: { "Access-Control-Allow-Origin": "*" },
-                //   url:
-                //     "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-                //   data: JSON.stringify({
-                //     country: "US",
-                //     email: user.email,
-                //     role: "sr_reviewer",
-                //   }),
-                // };
-                // var response = await axios(config);
-                // console.log(response.data, "response");
-                // var data = JSON.parse(response.data);
-                setTextBoxLabel1(responseOne.data["subcategory"]);
-                setTextBoxLabel2(responseOne.data["health authority name"]);
-                setTextBoxLabel3(responseOne.data["health authority website"]);
-                setTextBoxLabel4(responseOne.data["address"]);
-                setID(responseOne.data["id"]);
-                setspreadsheet_ID(responseOne.data["spreadsheet_ID"]);
-                // textBoxLabel1 = response.data.name;`
-                popUpTrigger(true);
-              }}
-            >
-              Previous
-            </Button>
-
-            <Button
-              onClick={async () => {
-                // setID("");
-                // setspreadsheet_ID("");
-                // var config = {
-                //   method: "POST",
-                //   // headers: { "Access-Control-Allow-Origin": "*" },
-                //   url:
-                //     "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-                //   data: JSON.stringify({
-                //     country: "US",
-                //     email: user.email,
-                //   }),
-                // };
-                // var response = await axios(config);
-                // console.log(response.data.name, "response");
-                // // var data = JSON.parse(response.data);
-                // setTextBoxLabel1(response.data["subcategory"]);
-                // setTextBoxLabel2(response.data["health authority name"]);
-                // setTextBoxLabel3(response.data["health authority website"]);
-                // setTextBoxLabel4(response.data["address"]);
-                sessionStorage.setItem("task_id", id);
-
-                var JSONOBJ = {
-                  spreadsheet_id: spreadsheet_ID,
-                  task_id: id,
-                  // end_time: "17-11-2021 9:42",
-                  geo_information: menuThree,
-                  organization_info: textBox1,
-                  changed_info: menuFour,
-                  health_care: textBox3,
-                  // not_health_care: textBox4,
-                  youtube_channelID: textBox5,
-                  medcase_team_member: menuTwo,
-                  channel_selection: menu,
-                  comments: textBox6,
-                };
-                console.log(JSONOBJ);
-
-                var configOne = {
-                  method: "POST",
-                  // headers: { "Access-Control-Allow-Origin": "*" },
-                  url:
-                    "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/setTaskValue",
-                  data: JSON.stringify(JSONOBJ),
-                };
-
-                var responseOne = await axios(configOne);
-                console.log(responseOne);
-                popUpTrigger(false);
-
-                setTextBoxLabel1("");
-                setTextBoxLabel2("");
-                setTextBoxLabel3("");
-                setTextBoxLabel4("");
-                setTextBox1("");
-                setTextBox3("");
-                setTextBox4("");
-                setTextBox5("");
-                setTextBox6("");
-
-                var config = {
-                  method: "POST",
-                  // headers: { "Access-Control-Allow-Origin": "*" },
-                  url:
-                    "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-                  data: JSON.stringify({
-                    country: "US",
-                    email: user.email,
-                  }),
-                };
-                var response = await axios(config);
-                console.log(response.data, "response");
-                // var data = JSON.parse(response.data);
-                setTextBoxLabel1(response.data["subcategory"]);
-                setTextBoxLabel2(response.data["health authority name"]);
-                setTextBoxLabel3(response.data["health authority website"]);
-                setTextBoxLabel4(response.data["address"]);
-                setID(response.data["id"]);
-                setspreadsheet_ID(response.data["spreadsheet_ID"]);
-
-                // textBoxLabel1 = response.data.name;`
-                popUpTrigger(true);
-              }}
-            >
-              Next
-            </Button>
-            <Button
-              onClick={async () => {
-                var config = {
-                  method: "POST",
-                  // headers: { "Access-Control-Allow-Origin": "*" },
-                  url:
-                    "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/skipTask",
-                  data: JSON.stringify({
-                    task_id: id,
-                    spreadsheet_id: spreadsheet_ID,
-                    // role: "sr_reviewer",
-                  }),
-                };
-                var response = await axios(config);
-                console.log(response.data);
-                // response.data
-                if (response.data == "Task Skipped") {
-                  popUpTrigger(false);
-
-                  setTextBoxLabel1("");
-                  setTextBoxLabel2("");
-                  setTextBoxLabel3("");
-                  setTextBoxLabel4("");
-                  setTextBox1("");
-                  setTextBox3("");
-                  setTextBox4("");
-                  setTextBox5("");
-                  setTextBox6("");
-
-                  var config = {
-                    method: "POST",
-                    // headers: { "Access-Control-Allow-Origin": "*" },
-                    url:
-                      "https://nwld2cgpj8.execute-api.us-east-1.amazonaws.com/Prod/getTask",
-                    data: JSON.stringify({
-                      country: "US",
-                      email: user.email,
-                    }),
-                  };
-                  var response = await axios(config);
-                  console.log(response.data, "response");
-                  // var data = JSON.parse(response.data);
-                  setTextBoxLabel1(response.data["subcategory"]);
-                  setTextBoxLabel2(response.data["health authority name"]);
-                  setTextBoxLabel3(response.data["health authority website"]);
-                  setTextBoxLabel4(response.data["address"]);
-                  setID(response.data["id"]);
-                  setspreadsheet_ID(response.data["spreadsheet_ID"]);
-
-                  // textBoxLabel1 = response.data.name;`
-                  popUpTrigger(true);
-                }
-              }}
-            >
-              Skip
-            </Button>
-          </div>
-        )}
-        {/* <JuniorReviwer /> */}
-      </PopUp>
+      {/* <PopUp>
+        <iframe
+          src="https://google-hes-argo-frontend-test.s3.amazonaws.com/build/index.html"
+          height="300"
+          width="300"
+          id="medcaseIframe"
+        ></iframe>
+      </PopUp> */}
       {/* {showNotification === true && (
         <Alert
           style={{ marginBottom: "1.5rem" }}

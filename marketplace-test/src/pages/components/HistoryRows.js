@@ -32,7 +32,7 @@ function HistoryRows(props) {
   //   const [taskNumber, setTaskNumber] = useState("taskNumber");
 
   return (
-    <>
+    <tr className="task-table-data">
       {/* <td className="task-td tdOne">{props.ids.id}</td> */}
       <td className="task-td tdOne">{props.id}</td>
       {/* <div className="vl"></div> */}
@@ -49,7 +49,7 @@ function HistoryRows(props) {
         <p>Pop Up</p>
       </PopUp>
       {/* // ICON BUTTON */}
-    </>
+    </tr>
     // </div>
     // </div>
   );

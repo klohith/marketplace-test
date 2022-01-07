@@ -8,7 +8,7 @@ const Auth0ProviderWithHistory = ({ children }) => {
   const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
 
   const onRedirectCallback = (appstate) => {
-    history.push(appstate?.returnTo || window.location.pathname);
+    history.push(appstate?.returnTo || "/tasks");
   };
 
   return (
@@ -16,7 +16,7 @@ const Auth0ProviderWithHistory = ({ children }) => {
       domain={domain}
       clientId={clientId}
       redirectUri={window.location.origin}
-      audience="https://google-hes-development.eu.auth0.com/api/v2/"
+      audience="https://medcase-dev.eu.auth0.com/api/v2/"
       scope="read:current_user update:current_user_metadata"
       onRedirectCallback={onRedirectCallback}
     >
