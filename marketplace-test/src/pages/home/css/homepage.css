@@ -1,0 +1,32 @@
+/* 9e9999 */
+/* .body-here {
+  background-color: #000000;
+  height: 100vh;
+  width: 100vh;
+  color: #000000;
+}
+ */
+
+.label-one {
+  display: inline-block;
+
+  padding: 20px;
+}
+
+.label-two {
+  display: block;
+}
+
+.dropdown-one {
+  display: block;
+}
+
+.textbox {
+  border: 1px solid;
+  border-radius: 0.3em;
+}
+
+.radio-button {
+  border: 2px;
+  background-color: red;
+}

@@ -1,0 +1,149 @@
+.container {
+  background-color: #f2f2f2;
+  /* margin: 20px; */
+}
+
+.task {
+  background-color: #f2f2f2;
+  /* margin: 20px; */
+  padding: 20px;
+  height: 100vh;
+  display: block;
+}
+
+.task-header {
+  background-color: #ffffff;
+  justify-content: space-between;
+  align-items: flex;
+  padding: 20px;
+}
+
+.task-head {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.task-claim {
+  background-color: #0586ff;
+  margin-left: 85%;
+  color: #ffffff;
+  padding: 10px;
+  border: 1px solid;
+  display: inline-block;
+  border-radius: 3px;
+  /* position: right; */
+  /* justify-content: center; */
+  /* align-self: right; */
+  /* float: right; */
+}
+
+.task-claim:hover {
+  background-color: #ffffff;
+  color: #0586ff;
+  font-weight: bold;
+  cursor: pointer;
+  border: 1px solid;
+  border-color: #0586ff;
+}
+
+.task-table-header-container {
+  background-color: white;
+  /* color: #fff; */
+  /* width: 100%; */
+
+  padding: 20px;
+}
+.task-table {
+  width: 100%;
+}
+.task-table,
+th {
+  padding: 10px;
+  align-items: left;
+  /* margin: 20px; */
+  background-color: #f1f1f1;
+}
+
+.th {
+  padding: 10px;
+  align-items: left;
+}
+
+.task-footer {
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.task-hr {
+  color: grey;
+  border-width: 1;
+  background-color: grey;
+  width: 100%;
+  /* align-items: center; */
+}
+
+.thThree {
+  width: 30%;
+  align-items: left;
+}
+
+.thOne,
+.thTwo,
+.thFour {
+  /* color: red; */
+  /* align-items: left; */
+  width: 10%;
+}
+
+/* .vl {
+  border-left: 1px solid gray;
+  height: 3px;
+  position: absolute;
+  left: 50%;
+  margin-left: -3px;
+  top: 0;
+} */
+
+.task-table-data-container {
+  background-color: white;
+  /* justify-content: center; */
+  /* color: #fff; */
+  /* width: 100%; */
+
+  padding: 20px;
+}
+
+.td {
+  padding: 10px;
+  /* align-items: center; */
+}
+
+.tdOne,
+.tdTwo,
+.tdThree {
+  width: 10%;
+  padding: 10px;
+  align-items: center;
+
+  /* justify-content: center; */
+}
+
+.tdFour {
+  width: 40%;
+  padding: 10px;
+  align-items: center;
+}
+
+.task-table-data {
+  background-color: white;
+  /* align-items: center; */
+  /* padding: 10px; */
+}
+
+/* .tdFiveButton {
+} */
+
+.radio-button {
+  border: 2px;
+  background-color: red;
+}
