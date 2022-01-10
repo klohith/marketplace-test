@@ -15,9 +15,9 @@ import axios from "axios";
 const App = () => {
   var { isAuthenticated,getAccessTokenSilently,buildAuthorizeUrl } = useAuth0();
   let history = useHistory();
-  getAccessTokenSilently({redirect_uri: "http://localhost:3000", })
-      .then(r=>console.log("authenticated", r))
-      .catch(r=>console.log("error", r))
+  // getAccessTokenSilently({redirect_uri: "http://localhost:3000", })
+  //     .then(r=>console.log("authenticated", r))
+  //     .catch(r=>console.log("error", r))
   // const [isAuthorized, setAuthorized] = useState(false);
   useEffect(() => {
     console.log(isAuthenticated);

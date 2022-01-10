@@ -124,6 +124,7 @@ function Homepage({ props }) {
           scope: "read:current_user",
         });
         setToken(token);
+        console.log("markeetplace");
         console.log(accessToken, token);
 
         const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user.sub}`;
@@ -402,8 +403,8 @@ function Homepage({ props }) {
   //   // console.log("Hi");
   // };
   let openFrame = () => {
-    const uri = `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize?response_type=token&connection=google-oauth2&client_id=TcsU556BBXOTGilwFdsXKzqqqsv9wB7G&redirect_uri=https://arge-hes.ue.r.appspot.com/&scope=read:current_user update:current_user_metadata&nonce=NONCE&prompt=none&audience=https://medcase-dev.eu.auth0.com/api/v2/`;
-
+    const uri = `https://medcase-dev.eu.auth0.com/authorize?response_type=token&connection=google-oauth2&client_id=TcsU556BBXOTGilwFdsXKzqqqsv9wB7G&redirect_uri=http://localhost:3000&scope=read:current_user update:current_user_metadata&nonce=NONCE&prompt=none&audience=https://medcase-dev.eu.auth0.com/api/v2/`;
+    const uri2 = "http://localhost:3000/"
     let iframe = document.createElement("iframe");
     // window.top.postMessage("I am Iframe", "iframe");
     // window.onmessage = (event) => {
@@ -411,7 +412,7 @@ function Homepage({ props }) {
     //     console.log("Parent received successfully.");
     //   }
     // };
-    iframe.src = "http://localhost:3000/";
+    iframe.src = uri;
     iframe.csp = "none";
     iframe.frameBorder = "0";
     iframe.id = "iframe";
